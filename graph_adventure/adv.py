@@ -2,6 +2,7 @@ from room import Room
 from player import Player
 from world import World
 
+from util import Queue, Stack
 import random
 
 # Load world
@@ -22,8 +23,23 @@ player = Player("Name", world.startingRoom)
 
 
 # FILL THIS IN
-traversalPath = ['n', 's']
+traversalPath = []
 
+
+def fill_traversal_graph():
+    pass
+
+
+traversal_graph = dict()
+traversal_graph[player.currentRoom.id] = dict()
+for exit_dir in player.currentRoom.getExits():
+    traversal_graph[player.currentRoom.id][exit_dir] = '?'
+
+travel_dir = random.choice(player.currentRoom.getExits())
+player.travel(travel_dir)
+print(player.currentRoom.id)
+
+print(traversal_graph)
 
 # TRAVERSAL TEST
 visited_rooms = set()
