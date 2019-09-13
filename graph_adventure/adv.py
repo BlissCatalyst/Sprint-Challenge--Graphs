@@ -58,20 +58,28 @@ def opposite_dir(direction):
 room_init()
 
 trail = list()
+backtrack = None
 
 while len(traversal_graph) < len(roomGraph):
     travel_dir = ''
     unknown = list()
 
-    travel_dir = random.choice(player.currentRoom.getExits())
-    
-    prev_room = player.currentRoom.id
-    player.travel(travel_dir)
-    traversalPath.append(travel_dir)
-    trail.append(opposite_dir(travel_dir))
-    if player.currentRoom.id not in traversal_graph:
-        room_init()
-    traversal_graph[prev_room][travel_dir] = player.currentRoom.id
+    if contains_question():
+        travel_dir = random.choice(player.currentRoom.getExits())
+        prev_room = player.currentRoom.id
+        player.travel(travel_dir)
+        traversalPath.append(travel_dir)
+        trail.append(opposite_dir)
+        if player.currentRoom.id not in traversal_graph:
+            room_init()
+        traversal_graph[prev_room][travel_dir] = player.currentRoom.id
+    else:
+        backtrack = trail.pop(-1)
+        travel_dir = backtrack
+        prev_room = player.currentRoom.id
+        player.travel(travel_dir)
+        traversalPath.append(travel_dir)
+        traversal_graph[prev_room][travel_dir] = player.currentRoom.id
 
 print(player.currentRoom.id)
 
