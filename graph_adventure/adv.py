@@ -55,31 +55,51 @@ def opposite_dir(direction):
     elif direction == 'e':
         return 'w'
 
+def move_log(travel_dir):
+    prev_room = player.currentRoom.id
+    prev_dir = travel_dir
+    player.travel(travel_dir)
+    traversalPath.append(travel_dir)
+    trail.append(opposite_dir(travel_dir))
+    if player.currentRoom.id not in traversal_graph:
+        room_init()
+    traversal_graph[prev_room][travel_dir] = player.currentRoom.id
+
 room_init()
 
 trail = list()
 backtrack = None
+prev_dir = None
 
 while len(traversal_graph) < len(roomGraph):
     travel_dir = ''
     unknown = list()
 
     if contains_question():
-        travel_dir = random.choice(player.currentRoom.getExits())
-        prev_room = player.currentRoom.id
-        player.travel(travel_dir)
-        traversalPath.append(travel_dir)
-        trail.append(opposite_dir)
-        if player.currentRoom.id not in traversal_graph:
-            room_init()
-        traversal_graph[prev_room][travel_dir] = player.currentRoom.id
+        for quest_dir in traversal_graph[player.currentRoom.id]:
+            unknown.append(quest_dir)
+        travel_dir = random.choice(unknown)
+        move_log(travel_dir)
     else:
-        backtrack = trail.pop(-1)
-        travel_dir = backtrack
-        prev_room = player.currentRoom.id
-        player.travel(travel_dir)
-        traversalPath.append(travel_dir)
-        traversal_graph[prev_room][travel_dir] = player.currentRoom.id
+        if len(trail):
+            backtrack = trail.pop(-1)
+            travel_dir = backtrack
+            prev_dir = travel_dir
+            prev_room = player.currentRoom.id
+            player.travel(travel_dir)
+            traversalPath.append(travel_dir)
+            traversal_graph[prev_room][travel_dir] = player.currentRoom.id
+        else:
+            travel_dir = random.choice(player.currentRoom.getExits())
+            if travel_dir == opposite_dir(prev_dir):
+                travel_dir = random.choice(player.currentRoom.getExits())
+            prev_dir = travel_dir
+            prev_room = player.currentRoom.id
+            player.travel(travel_dir)
+            traversalPath.append(travel_dir)
+            if player.currentRoom.id not in traversal_graph:
+                room_init()
+            traversal_graph[prev_room][travel_dir] = player.currentRoom.id
 
 print(player.currentRoom.id)
 
