@@ -36,17 +36,37 @@ def room_init():
     for exit_dir in player.currentRoom.getExits():
         traversal_graph[player.currentRoom.id][exit_dir] = '?'
 
+def contains_question():
+        # Just finds out if and unknown exit exists
+    for n_e_s_w in player.currentRoom.getExits():
+        if traversal_graph[player.currentRoom.id][n_e_s_w] == '?':
+            return True
+        else:
+            return False
 
 room_init()
 
-while len(traversal_graph) < 500:
-    travel_dir = random.choice(player.currentRoom.getExits())
+trail = list()
+
+while len(traversal_graph) < len(roomGraph):
+    travel_dir = ''
+    contains_unknown = False
+    unknown = list()
+
+    if contains_question():
+        for n_e_s_w in player.currentRoom.getExits():
+            unknown.append(n_e_s_w)
+        travel_dir = random.choice(unknown)
+    else:
+
+        travel_dir = random.choice(player.currentRoom.getExits())
+    
     prev_room = player.currentRoom.id
     player.travel(travel_dir)
     traversalPath.append(travel_dir)
     if player.currentRoom.id not in traversal_graph:
         room_init()
-        traversal_graph[prev_room][travel_dir] = player.currentRoom.id
+    traversal_graph[prev_room][travel_dir] = player.currentRoom.id
 
 print(player.currentRoom.id)
 
